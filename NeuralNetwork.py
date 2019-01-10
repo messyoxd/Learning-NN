@@ -1,9 +1,14 @@
 import math
 import numpy as np
 
-class NeuralNetwork:
+sigmoid = lambda x: 1/(1+math.exp(-x))
+dsigmoid = lambda y: y * (1-y)
 
-    def __init__(self, input_nodes, hidden_nodes, output_nodes):
+class NeuralNetwork:
+    '''
+    Perceptron with 3
+    '''
+    def __init__(self, input_nodes, hidden_nodes, output_nodes, learning_rate, func, dfunc):
         self.input_nodes = input_nodes
         self.hidden_nodes = hidden_nodes
         self.output_nodes = output_nodes
@@ -14,9 +19,19 @@ class NeuralNetwork:
         self.bias_h = np.random.rand(self.hidden_nodes, 1)
         self.bias_o = np.random.rand(self.output_nodes, 1)
 
-        self.learning_rate = 0.1
-        self.sigmoid = np.vectorize(lambda x: 1/(1+math.exp(-x)))
-        self.dsigmoid = np.vectorize(lambda y: y * (1-y)) #y is already sigmoided
+        self.set_learning_rate(learning_rate)
+        self.set_activation_function(func, dfunc)
+        # self.sigmoid = np.vectorize(lambda x: math.tanh(x))
+        # self.dsigmoid = np.vectorize(lambda y: 1 - (y * y)) #y is already tanh
+        # self.sigmoid = np.vectorize(lambda x: 1/(1+math.exp(-x)))
+        # self.dsigmoid = np.vectorize(lambda y: y * (1-y)) #y is already sigmoided
+
+    def set_learning_rate(self, learning_rate=0.1):
+        self.learning_rate = learning_rate
+
+    def set_activation_function(self, func=sigmoid, dfunc=dsigmoid):
+        self.func = np.vectorize(func)
+        self.dfunc = np.vectorize(dfunc)
 
     def feedfoward(self, array_input):
 
@@ -26,12 +41,12 @@ class NeuralNetwork:
         hidden += self.bias_h
 
         #activation function
-        hidden = self.sigmoid(hidden)
+        hidden = self.func(hidden)
 
         #generating the output's output
         output = self.weights_ho @ hidden
         output+=self.bias_o
-        output = self.sigmoid(output)
+        output = self.func(output)
 
         return output.tolist()
 
@@ -49,12 +64,12 @@ class NeuralNetwork:
         hidden += self.bias_h
 
         #activation function
-        hidden = self.sigmoid(hidden)
+        hidden = self.func(hidden)
 
         #generating the output's output
         outputs = self.weights_ho @ hidden
         outputs += self.bias_o
-        outputs = self.sigmoid(outputs)
+        outputs = self.func(outputs)
 
         ##########################################################
         ####################calculate the output error############
@@ -65,7 +80,7 @@ class NeuralNetwork:
         output_errors = targets - outputs
         #calculate output gradients
         '''calculate the derivate of the sigmoid function for all the matrix elements'''
-        output_gradient = self.dsigmoid(outputs)
+        output_gradient = self.dfunc(outputs)
         output_gradient*=output_errors
         output_gradient*=self.learning_rate
         #calculate hidden deltas
@@ -83,7 +98,7 @@ class NeuralNetwork:
         errors_ho = weights_ho_transpose @ output_errors
 
         #hidden gradient
-        hidden_gradient = self.dsigmoid(hidden)
+        hidden_gradient = self.dfunc(hidden)
         hidden_gradient *= errors_ho
         hidden_gradient *=self.learning_rate
 
