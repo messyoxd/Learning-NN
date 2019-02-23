@@ -19,7 +19,7 @@ def dtanh(y):
 class Iris:
 
 	def __init__(self):
-		self.nn = NeuralNetwork(4,4,3,0.1,tanh,dtanh)
+		self.nn = NeuralNetwork([4,4,3],0.1,tanh,dtanh)
 
 	def training(self, filename):
 		aux = []

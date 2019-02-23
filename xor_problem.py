@@ -21,9 +21,13 @@ training_data = [
 
 ]
 
+
+sigmoid = lambda x: 1/(1+math.exp(-x))
+dsigmoid = lambda y: y * (1-y)
+
 if __name__ == "__main__":
 
-    nn = NeuralNetwork(2,2,1)
+    nn = NeuralNetwork([2,2,1],0.1,sigmoid,dsigmoid)
 
     for i in range(0,50000):
         data = random.choice(training_data)

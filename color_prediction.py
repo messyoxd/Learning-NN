@@ -5,6 +5,9 @@ import sys
 import random
 from NeuralNetwork import *
 
+sigmoid = lambda x: 1/(1+math.exp(-x))
+dsigmoid = lambda y: y * (1-y)
+
 class Example(QWidget):
 
     def __init__(self, widgth, height):
@@ -18,7 +21,7 @@ class Example(QWidget):
         self.g = 0
         self.b = 0
 
-        self.nn = NeuralNetwork(3,3,2)
+        self.nn = NeuralNetwork([3,3,2],0.1,sigmoid,dsigmoid)
 
         for i in range(0, 100000):
             r = random.randint(0,255)
