@@ -40,7 +40,7 @@ class Example(QWidget):
     def initUI(self):
 
         self.setGeometry(300, 300, self.widgth, self.height)
-        self.setWindowTitle('Colours')
+        self.setWindowTitle('Colors')
         self.show()
 
 
